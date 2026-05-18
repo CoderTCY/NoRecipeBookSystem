@@ -1,0 +1,26 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "license": "${license}",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "${group}.fabric.NoRecipeBookSystemFabric"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "minecraft": ">=26.1",
+        "java": ">=${java_version}"
+    }
+}
+  

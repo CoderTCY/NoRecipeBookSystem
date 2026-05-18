@@ -1,0 +1,26 @@
+plugins {
+    // see https://fabricmc.net/develop/ for new versions
+    id 'net.fabricmc.fabric-loom' version '1.15.5' apply false
+    // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
+    id 'net.neoforged.moddev' version '2.0.141' apply false
+}
+
+tasks.register('universalJar', Jar) {
+    group = 'build'
+    description = 'Merge Fabric + NeoForge jars into a single universal jar'
+
+    archiveFileName = "${mod_id}-universal-${minecraft_version}-${version}.jar"
+    destinationDirectory = layout.buildDirectory.dir('libs')
+
+    // Fabric jar — common classes + fabric entry + fabric.mod.json (Loom 1.15+ jars directly remapped)
+    from(zipTree(project(':fabric').tasks.named('jar').flatMap { it.archiveFile }))
+
+    // NeoForge jar — common classes + neoforge entry + neoforge.mods.toml
+    from(zipTree(project(':neoforge').tasks.named('jar').flatMap { it.archiveFile }))
+
+    // Both jars contain the same common classes (26.1 is deobfuscated, no remapping difference).
+    // Duplicate metadata (fabric.mod.json vs META-INF/neoforge.mods.toml) naturally coexist.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    dependsOn ':fabric:build', ':neoforge:build'
+}
