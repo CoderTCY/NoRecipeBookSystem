@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "net.codertcy.norecipebooksystem.common.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "refmap": "${mod_id}.refmap.json",
+  "client": [
+    "ButtonMixin",
+    "ClientRecipeBookMixin",
+    "ImageButtonAccessor",
+    "ScreenMixin"
+  ],
+  "mixins": [
+    "RecipeBookMixin",
+    "ServerPlayerMixin",
+    "ServerRecipeBookMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

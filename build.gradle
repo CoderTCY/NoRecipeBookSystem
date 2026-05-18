@@ -1,0 +1,33 @@
+plugins {
+    // see https://fabricmc.net/develop/ for new versions
+    id 'fabric-loom' version '1.8-SNAPSHOT' apply false
+    // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
+    id 'net.neoforged.moddev' version '2.0.49-beta' apply false
+    // see https://github.com/GradleUp/shadow
+    id 'com.gradleup.shadow' version '8.3.5' apply false
+}
+
+tasks.register('universalJar', Jar) {
+    group = 'build'
+    description = 'Merge Fabric + Forge + NeoForge jars into one universal jar'
+
+    archiveFileName = "${rootProject.mod_id}-universal-${rootProject.minecraft_version}-${rootProject.version}.jar"
+    destinationDirectory = layout.buildDirectory.dir('libs')
+
+    manifest {
+        attributes 'MixinConfigs': "${rootProject.mod_id}.mixins.json,${rootProject.mod_id}.forge.mixins.json"
+    }
+
+    // Base: neoforge jar — Mojang common classes + neoforge entry + neoforge metadata
+    from(zipTree(project(':neoforge').tasks.jar.archiveFile))
+
+    // Add: fabric relocated jar — intermediary common classes at fabric.common.* + entry + metadata
+    from(zipTree(project(':fabric').tasks.relocatedJar.archiveFile))
+
+    // Add: forge jar — forge entry + mods.toml + forge mixin config
+    from(zipTree(project(':forge').tasks.jar.archiveFile))
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    dependsOn ':fabric:fixFabricMixinConfigs', ':forge:jar', ':neoforge:jar'
+}

@@ -1,0 +1,91 @@
+plugins {
+    id 'multiloader-loader'
+    id 'fabric-loom'
+    id 'com.gradleup.shadow'
+}
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+}
+
+loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client {
+            client()
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('runs/client')
+        }
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('runs/server')
+        }
+    }
+}
+
+tasks.register('relocatedJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    group = 'build'
+    description = 'Relocate common classes to fabric.common sub-package for universal jar'
+
+    from(zipTree(tasks.remapJar.archiveFile))
+
+    relocate 'net.codertcy.norecipebooksystem.common', 'net.codertcy.norecipebooksystem.fabric.common'
+
+    // Exclude the Mojang-targeted mixin config; Fabric uses its own
+    exclude 'norecipebooksystem.mixins.json'
+
+    archiveClassifier = 'relocated'
+
+    dependsOn remapJar
+}
+
+// After relocation, fix mixin config package and refmap keys to match relocated class paths.
+// Loom generates the refmap using the source package (common.mixin), but after Shadow
+// relocates classes to fabric.common.mixin, the refmap and mixin config keys are stale.
+tasks.register('fixFabricMixinConfigs') {
+    group = 'build'
+    description = 'Update mixin config and refmap package paths after Shadow relocation'
+    dependsOn relocatedJar
+
+    doLast {
+        def jarPath = relocatedJar.archiveFile.get().asFile.toPath()
+        def fs = java.nio.file.FileSystems.newFileSystem(jarPath, null as ClassLoader)
+        try {
+            def srcPkg  = 'net.codertcy.norecipebooksystem.common'
+            def dstPkg  = 'net.codertcy.norecipebooksystem.fabric.common'
+            def srcPath = srcPkg.replace('.', '/')   // net/codertcy/norecipebooksystem/common
+            def dstPath = dstPkg.replace('.', '/')   // net/codertcy/norecipebooksystem/fabric/common
+
+            // 1) Fix mixin config package
+            def mixinConfigPath = fs.getPath('/norecipebooksystem.fabric.mixins.json')
+            def content = new String(java.nio.file.Files.readAllBytes(mixinConfigPath), 'UTF-8')
+            content = content.replace(srcPkg, dstPkg)
+            java.nio.file.Files.write(mixinConfigPath, content.getBytes('UTF-8'))
+
+            // 2) Fix refmap class-path keys
+            def refmapPath = fs.getPath('/norecipebooksystem.refmap.json')
+            if (java.nio.file.Files.exists(refmapPath)) {
+                def refContent = new String(java.nio.file.Files.readAllBytes(refmapPath), 'UTF-8')
+                refContent = refContent.replace(srcPath, dstPath)
+                java.nio.file.Files.write(refmapPath, refContent.getBytes('UTF-8'))
+            }
+
+            println "fixFabricMixinConfigs: updated mixin config and refmap in ${relocatedJar.archiveFileName.get()}"
+        } finally {
+            fs.close()
+        }
+    }
+}
