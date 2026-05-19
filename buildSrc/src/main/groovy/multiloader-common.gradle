@@ -60,13 +60,17 @@ processResources {
             'version'                      : version,
             'group'                        : project.group, //Else we target the task's group.
             'minecraft_version'            : minecraft_version,
-            'minecraft_version_range'       : minecraft_version_range,
-            'fabric_minecraft_version_range': minecraft_version_range
-                    .replace('[', '>=')
-                    .replace('(', '>')
-                    .replace(']', '<=')
-                    .replace(')', '<')
-                    .replace(',', ' '),
+            'minecraft_version_range'      : minecraft_version_range,
+            'fabric_minecraft_version_range' : 
+                // Convert Maven version range [1.21, 1.22) → Fabric format >=1.21 <1.22
+                minecraft_version_range
+                    .replaceAll(~/(\[)\s*([^,]+)/, '>=$2')
+                    .replaceAll(~/(\()\s*([^,]+)/, '>$2')
+                    .replaceAll(~/\s*,\s*([^\]\)]+)\s*\]/, ' <=$1')
+                    .replaceAll(~/\s*,\s*([^\]\)]+)\s*\)/, ' <$1')
+                    .replaceAll(~/\s*,\s*\)/, '')
+                    .replaceAll(~/\s*,\s*\]/, '')
+            ,
             'fabric_version'               : fabric_version,
             'fabric_loader_version'        : fabric_loader_version,
             'mod_name'                     : mod_name,
