@@ -6,8 +6,9 @@
   "refmap": "${mod_id}.refmap.json",
   "client": [
     "ButtonMixin",
-    "ClientRecipeBookMixin",
+    "ClientRecipeBookAccessor",
     "ImageButtonAccessor",
+    "RecipeBookComponentMixin",
     "ScreenMixin"
   ],
   "mixins": [

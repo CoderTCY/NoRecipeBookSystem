@@ -1,5 +1,8 @@
 package net.codertcy.norecipebooksystem.common.mixin;
 
+import net.codertcy.norecipebooksystem.common.util.JeiHelper;
+import net.minecraft.client.ClientRecipeBook;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -15,7 +18,18 @@ public class ButtonMixin {
         Button button = (Button) (Object) this;
 
         if (button instanceof ImageButton image && ((ImageButtonAccessor) image).getSprites() != null && ((ImageButtonAccessor) image).getSprites().equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES)) {
-            ci.cancel();
+            // Block recipe book button press if JEI is active on server, or no recipe data was sent
+            if (JeiHelper.isJeiOnServer()) {
+                ci.cancel();
+                return;
+            }
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null) {
+                ClientRecipeBook book = (ClientRecipeBook) mc.player.getRecipeBook();
+                if (((ClientRecipeBookAccessor) book).getKnown().isEmpty()) {
+                    ci.cancel();
+                }
+            }
         }
     }
 }

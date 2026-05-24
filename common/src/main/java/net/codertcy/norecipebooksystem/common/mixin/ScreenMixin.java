@@ -1,5 +1,8 @@
 package net.codertcy.norecipebooksystem.common.mixin;
 
+import net.codertcy.norecipebooksystem.common.util.JeiHelper;
+import net.minecraft.client.ClientRecipeBook;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -16,7 +19,18 @@ public class ScreenMixin {
     @Inject(method = "addRenderableWidget", at = @At("HEAD"), cancellable = true)
     public <T extends GuiEventListener & Renderable & NarratableEntry> void onWidgetAdded(T widget, CallbackInfoReturnable<T> cir) {
         if (widget instanceof ImageButton image && ((ImageButtonAccessor) image).getSprites() != null && ((ImageButtonAccessor) image).getSprites().equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES)) {
-            cir.setReturnValue(null);
+            // Block recipe book button if JEI is active on server, or no recipe data was sent
+            if (JeiHelper.isJeiOnServer()) {
+                cir.setReturnValue(null);
+                return;
+            }
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null) {
+                ClientRecipeBook book = (ClientRecipeBook) mc.player.getRecipeBook();
+                if (((ClientRecipeBookAccessor) book).getKnown().isEmpty()) {
+                    cir.setReturnValue(null);
+                }
+            }
         }
     }
 }
