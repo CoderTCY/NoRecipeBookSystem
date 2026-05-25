@@ -7,7 +7,7 @@
     "authors": [
         "${mod_author}"
     ],
-    "icon": "icon.png",
+    "icon": "pack.png",
     "license": "${license}",
     "environment": "*",
     "entrypoints": {
