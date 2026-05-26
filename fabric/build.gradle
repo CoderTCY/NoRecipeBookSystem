@@ -69,13 +69,21 @@ tasks.register('fixFabricMixinConfigs') {
             def srcPath = srcPkg.replace('.', '/')   // net/codertcy/norecipebooksystem/common
             def dstPath = dstPkg.replace('.', '/')   // net/codertcy/norecipebooksystem/fabric/common
 
-            // 1) Fix mixin config package
-            def mixinConfigPath = fs.getPath('/norecipebooksystem.fabric.mixins.json')
-            def content = new String(java.nio.file.Files.readAllBytes(mixinConfigPath), 'UTF-8')
-            content = content.replace(srcPkg, dstPkg)
-            java.nio.file.Files.write(mixinConfigPath, content.getBytes('UTF-8'))
+            // 1) Fix mixin config package (fabric mixins)
+            def fabricMixinConfigPath = fs.getPath('/norecipebooksystem.fabric.mixins.json')
+            def fabricContent = new String(java.nio.file.Files.readAllBytes(fabricMixinConfigPath), 'UTF-8')
+            fabricContent = fabricContent.replace(srcPkg, dstPkg)
+            java.nio.file.Files.write(fabricMixinConfigPath, fabricContent.getBytes('UTF-8'))
 
-            // 2) Fix refmap class-path keys
+            // 2) Fix mixin config package (compat mixins)
+            def compatMixinConfigPath = fs.getPath('/norecipebooksystem.compat.mixins.json')
+            if (java.nio.file.Files.exists(compatMixinConfigPath)) {
+                def compatContent = new String(java.nio.file.Files.readAllBytes(compatMixinConfigPath), 'UTF-8')
+                compatContent = compatContent.replace(srcPkg, dstPkg)
+                java.nio.file.Files.write(compatMixinConfigPath, compatContent.getBytes('UTF-8'))
+            }
+
+            // 3) Fix refmap class-path keys
             def refmapPath = fs.getPath('/norecipebooksystem.refmap.json')
             if (java.nio.file.Files.exists(refmapPath)) {
                 def refContent = new String(java.nio.file.Files.readAllBytes(refmapPath), 'UTF-8')

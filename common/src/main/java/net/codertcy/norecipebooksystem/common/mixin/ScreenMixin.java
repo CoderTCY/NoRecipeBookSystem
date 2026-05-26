@@ -13,8 +13,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Screen.class)
 public class ScreenMixin {
+
+    private static final boolean EMI_LOADED = checkEmiLoaded();
+
+    private static boolean checkEmiLoaded() {
+        try {
+            Class.forName("dev.emi.emi.config.EmiConfig", false, ScreenMixin.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     @Inject(method = "addRenderableWidget", at = @At("HEAD"), cancellable = true)
     public <T extends GuiEventListener & Renderable & NarratableEntry> void onWidgetAdded(T widget, CallbackInfoReturnable<T> cir) {
+        if (EMI_LOADED) return; // EMI 接管配方书按钮行为
+
         if (widget instanceof ImageButton image) {
             var sprites = ((ImageButtonAccessor) image).getSprites();
             if (sprites != null && sprites.equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES)) {

@@ -15,7 +15,7 @@ tasks.register('universalJar', Jar) {
     destinationDirectory = layout.buildDirectory.dir('libs')
 
     manifest {
-        attributes 'MixinConfigs': "${rootProject.mod_id}.mixins.json,${rootProject.mod_id}.forge.mixins.json"
+        attributes 'MixinConfigs': "${rootProject.mod_id}.mixins.json,${rootProject.mod_id}.forge.mixins.json,${rootProject.mod_id}.compat.mixins.json"
     }
 
     // Base: neoforge jar — Mojang common classes + neoforge entry + neoforge metadata

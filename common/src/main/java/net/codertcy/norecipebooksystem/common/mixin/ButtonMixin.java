@@ -10,8 +10,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Button.class)
 public class ButtonMixin {
+
+    private static final boolean EMI_LOADED = checkEmiLoaded();
+
+    private static boolean checkEmiLoaded() {
+        try {
+            Class.forName("dev.emi.emi.config.EmiConfig", false, ButtonMixin.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     @Inject(method = "onPress", at = @At("HEAD"), cancellable = true)
     public void onPress(CallbackInfo ci) {
+        if (EMI_LOADED) return; // EMI 接管按钮行为
+
         Button button = (Button) (Object) this;
 
         if (button instanceof ImageButton image) {
