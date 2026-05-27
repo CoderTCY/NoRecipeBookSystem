@@ -6,6 +6,7 @@
   "client": [
     "REIConfigObjectMixin",
     "REIConfigScreenMixin",
+    "REISubMenuMixin",
     "EMIConfigMixin"
   ],
   "injectors": {
