@@ -16,13 +16,30 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 从 REI 齿轮图标的快捷菜单中，移除 Display Settings SubMenu
- * 里的 "Remove Recipe Book" 开关项，使用户无法在此入口切换。
- * REI 是可选依赖，仅在 REI 加载时生效。
+ * Removes the "Remove Recipe Book" toggle from the "Display Settings" submenu
+ * in REI's gear icon quick-menu.
+ *
+ * <p>{@code ConfigButtonWidget.menuEntries()} builds the popup menu as a list
+ * of {@code FavoriteMenuEntry} objects, one of which is a {@code SubMenuEntry}
+ * titled "Display Settings…". Inside that submenu is a {@code ToggleMenuEntry}
+ * for "Remove Recipe Book" backed by {@code config::doesDisableRecipeBook}.
+ *
+ * <p>This mixin intercepts the return value of {@code menuEntries()}, locates the
+ * {@code SubMenuEntry} with translation key {@code text.rei.config.menu.display},
+ * copies its {@code entries} list, filters out the toggle whose component key
+ * is {@code text.rei.config.menu.display.remove_recipe_book}, and writes the
+ * filtered list back via reflection.
+ *
+ * <p>REI is optional — this mixin only activates when REI is present.
+ *
+ * @see REIConfigObjectMixin Overrides the getter at the API level
+ * @see REIConfigScreenMixin  Removes the option from the main config screen UI
  */
 @Pseudo
 @Mixin(targets = "me.shedaniel.rei.impl.client.gui.widget.ConfigButtonWidget", priority = 2000)
 public abstract class REISubMenuMixin {
+    /** No-op; this class is a mixin target and should not be instantiated. */
+    private REISubMenuMixin() {}
 
     @Unique
     private static final String DISPLAY_KEY = "text.rei.config.menu.display";
@@ -68,20 +85,23 @@ public abstract class REISubMenuMixin {
                 subMenuEntriesField.set(entry, filtered);
             }
         } catch (Exception ignored) {
-            // REI 不存在或结构变化时静默跳过
+            // Silently ignored — REI may be absent or the structure may have changed
         }
     }
 
+    /**
+     * Checks whether a {@link Component}'s translation key matches the given key.
+     * Falls back to a string comparison on the rendered text.
+     */
     @Unique
     private static boolean hasTranslationKey(Component component, String key) {
         if (component == null) return false;
-        // 检查 Component 是否为可翻译文本且 key 匹配
         if (component instanceof MutableComponent mutable) {
             if (mutable.getContents() instanceof TranslatableContents translatable) {
                 return key.equals(translatable.getKey());
             }
         }
-        // 回退：比对渲染后的字符串（兜底）
+        // Fallback: compare against the rendered string
         return key.equals(component.getString());
     }
 }

@@ -13,18 +13,32 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 /**
- * 确保 EMI 的 recipeBookAction 始终为非 DEFAULT 值：
+ * Ensures EMI's {@code recipeBookAction} is never set to {@code DEFAULT}.
+ *
+ * <p>EMI loads its config from a CSS-like file.  The config parser reads a string
+ * value and converts it to an enum constant via {@code ConfigEnum} setter.
+ * When the value is {@code "default"}, it matches {@code RecipeBookAction.DEFAULT},
+ * which tells EMI to leave the recipe book alone — exactly what we don't want.
+ *
+ * <p>This mixin applies two countermeasures inside {@code EmiConfig.<clinit>}:
  * <ol>
- *   <li>用动态代理替换 {@code EmiConfig.SETTERS} 中的 {@code ConfigEnum} 类型读取器，
- *      让 CSS 值 "default" 永远无法匹配到任何枚举常量——跳过赋值，字段保留 Java 默认值
- *      即 {@code RecipeBookAction.TOGGLE_CRAFTABLES}。</li>
- *   <li>注册 UI 过滤器，从枚举选择列表中排除 DEFAULT 选项。</li>
+ *   <li><b>Setter proxy:</b>  Replaces the {@code ConfigEnum} entry in
+ *       {@code EmiConfig.SETTERS} with a JDK dynamic proxy.  When the setter is
+ *       called for {@code recipeBookAction} and the CSS value is {@code "default"},
+ *       the proxy skips the field write, so the field keeps its Java default
+ *       of {@code RecipeBookAction.TOGGLE_CRAFTABLES}.</li>
+ *   <li><b>UI filter:</b>  Registers a {@code Predicate} in {@code EmiConfig.FILTERS}
+ *       under key {@code "ui.recipe-book-action"} that excludes the enum constant
+ *       named {@code "default"} from the selection list in EMI's config screen.</li>
  * </ol>
- * EMI 是可选依赖，仅在 EMI 加载时生效。
+ *
+ * <p>EMI is optional — this mixin only activates when EMI is present.
  */
 @Pseudo
 @Mixin(targets = "dev.emi.emi.config.EmiConfig", priority = 2000)
 public abstract class EMIConfigMixin {
+    /** No-op; this class is a mixin target and should not be instantiated. */
+    private EMIConfigMixin() {}
 
     private static boolean patched = false;
 
@@ -34,7 +48,7 @@ public abstract class EMIConfigMixin {
         try {
             Class<?> configClass = Class.forName("dev.emi.emi.config.EmiConfig");
 
-            // ===== 1) 替换 ConfigEnum setter：拦截 "default" 值 =====
+            // ===== 1) Replace the ConfigEnum setter to intercept "default" =====
             Field settersField = configClass.getDeclaredField("SETTERS");
             settersField.setAccessible(true);
             @SuppressWarnings("unchecked")
@@ -51,7 +65,8 @@ public abstract class EMIConfigMixin {
                             if ("setValue".equals(method.getName())) {
                                 Field field = (Field) args[2];
                                 if ("recipeBookAction".equals(field.getName())) {
-                                    // 读取 CSS 值；通过反射避免 QDCSS 编译期依赖
+                                    // Access the CSS entry value via reflection to avoid
+                                    // a compile-time dependency on QDCSS
                                     Object css = args[0];
                                     String annot = (String) args[1];
                                     Method cssGet = css.getClass().getMethod("get", String.class);
@@ -60,7 +75,7 @@ public abstract class EMIConfigMixin {
                                     String value = (String) entryGet.invoke(entry);
 
                                     if ("default".equals(value)) {
-                                        // 跳过赋值，字段保持 Java 默认值 TOGGLE_CRAFTABLES
+                                        // Skip the write — field keeps its Java default (TOGGLE_CRAFTABLES)
                                         return null;
                                     }
                                 }
@@ -70,7 +85,7 @@ public abstract class EMIConfigMixin {
                 setters.put(configEnumClass, wrappedSetter);
             }
 
-            // ===== 2) 注册 UI 过滤器：枚举选择页不显示 DEFAULT =====
+            // ===== 2) Register a UI filter to exclude DEFAULT from enum selection =====
             Field filtersField = configClass.getField("FILTERS");
             @SuppressWarnings("unchecked")
             Map<String, Predicate<?>> filters = (Map<String, Predicate<?>>) filtersField.get(null);
@@ -86,7 +101,7 @@ public abstract class EMIConfigMixin {
 
             patched = true;
         } catch (Exception ignored) {
-            // EMI 不存在或结构变化时静默跳过
+            // Silently ignored — EMI may be absent or the structure may have changed
         }
     }
 }

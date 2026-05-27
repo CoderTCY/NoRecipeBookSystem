@@ -10,13 +10,29 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * 使 REI 的 disableRecipeBook 选项始终返回 false，
- * 从而阻止 REI 尝试移除原版配方书按钮。
- * REI 是可选依赖，仅在 REI 加载时生效。
+ * Forces REI's {@code doesDisableRecipeBook()} to always return {@code false}.
+ *
+ * <p>REI calls this method in several places to decide whether to remove the
+ * vanilla recipe book button:
+ * <ul>
+ *   <li>The "Vanilla Recipe Book" toggle in the main config screen</li>
+ *   <li>The "Display Settings" → "Remove Recipe Book" toggle in the gear icon menu</li>
+ *   <li>Runtime initialization that conditionally hides the recipe book button</li>
+ * </ul>
+ * By pinning the return value to {@code false}, we prevent REI from touching
+ * the recipe book button at all, leaving full control to this mod's own
+ * {@code ButtonMixin} / {@code ScreenMixin}.
+ *
+ * <p>REI is optional — this mixin only activates when REI is present.
+ *
+ * @see REIConfigScreenMixin Removes the option from the main config screen UI
+ * @see REISubMenuMixin    Removes the toggle from the gear icon quick menu
  */
 @Pseudo
 @Mixin(targets = "me.shedaniel.rei.impl.client.config.ConfigObjectImpl", priority = 2000)
 public abstract class REIConfigObjectMixin {
+    /** No-op; this class is a mixin target and should not be instantiated. */
+    private REIConfigObjectMixin() {}
 
     @Unique
     private static final Logger LOGGER = LogUtils.getLogger();
