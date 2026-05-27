@@ -1,0 +1,14 @@
+{
+  "required": false,
+  "package": "net.codertcy.norecipebooksystem.common.mixin.compact",
+  "compatibilityLevel": "JAVA_25",
+  "minVersion": "0.8",
+  "refmap": "${mod_id}.refmap.json",
+  "client": [
+    "RrvClientConfigMixin",
+    "RrvClientConfigScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}
