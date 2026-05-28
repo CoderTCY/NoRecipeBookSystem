@@ -1,5 +1,6 @@
 package net.codertcy.norecipebooksystem.common.mixin;
 
+import net.codertcy.norecipebooksystem.common.RecipeViewerHelper;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -27,17 +28,6 @@ public class ScreenMixin {
     /** No-op; this class is a mixin target and should not be instantiated. */
     private ScreenMixin() {}
 
-    private static final boolean EMI_LOADED = checkEmiLoaded();
-
-    private static boolean checkEmiLoaded() {
-        try {
-            Class.forName("dev.emi.emi.config.EmiConfig", false, ScreenMixin.class.getClassLoader());
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
     /**
      * Intercepts {@link Screen#addRenderableWidget} and blocks the recipe book
      * button from being added to the screen.
@@ -50,7 +40,7 @@ public class ScreenMixin {
      */
     @Inject(method = "addRenderableWidget", at = @At("HEAD"), cancellable = true)
     public <T extends GuiEventListener & Renderable & NarratableEntry> void onWidgetAdded(T widget, CallbackInfoReturnable<T> cir) {
-        if (EMI_LOADED) return; // EMI handles the recipe book button behavior
+        if (RecipeViewerHelper.isEmiLoaded()) return; // EMI handles the recipe book button behavior
 
         if (widget instanceof ImageButton image) {
             var sprites = ((ImageButtonAccessor) image).getSprites();

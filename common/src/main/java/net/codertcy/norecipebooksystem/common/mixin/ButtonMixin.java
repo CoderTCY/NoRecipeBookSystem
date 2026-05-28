@@ -1,5 +1,6 @@
 package net.codertcy.norecipebooksystem.common.mixin;
 
+import net.codertcy.norecipebooksystem.common.RecipeViewerHelper;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -23,17 +24,6 @@ public class ButtonMixin {
     /** No-op; this class is a mixin target and should not be instantiated. */
     private ButtonMixin() {}
 
-    private static final boolean EMI_LOADED = checkEmiLoaded();
-
-    private static boolean checkEmiLoaded() {
-        try {
-            Class.forName("dev.emi.emi.config.EmiConfig", false, ButtonMixin.class.getClassLoader());
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
     /**
      * Intercepts {@link Button#onPress()} and cancels it for the recipe book button.
      *
@@ -44,7 +34,7 @@ public class ButtonMixin {
      */
     @Inject(method = "onPress", at = @At("HEAD"), cancellable = true)
     public void onPress(CallbackInfo ci) {
-        if (EMI_LOADED) return; // EMI handles the button behavior
+        if (RecipeViewerHelper.isEmiLoaded()) return; // EMI handles the button behavior
 
         Button button = (Button) (Object) this;
 
