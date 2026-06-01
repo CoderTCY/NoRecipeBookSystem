@@ -22,15 +22,15 @@ import java.util.List;
  */
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin {
-    /** Private constructor — mixin classes are never instantiated directly. */
+    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private ServerPlayerMixin() {}
 
     /**
-     * Intercepts {@code ServerPlayer.awardRecipes(Collection)} at HEAD and returns 0,
-     * preventing any recipe award packets from being sent for the given recipe holders.
+     * 在 {@code ServerPlayer.awardRecipes(Collection)} 的 HEAD 处拦截，并直接返回 0，
+     * 阻止为指定配方持有者发送任何配方授予数据包。
      *
-     * @param holders the recipes being awarded (ignored)
-     * @param cir     callback returning 0, skipping the original method
+     * @param holders 即将被授予的配方（忽略）
+     * @param cir     返回 0 的回调，用以跳过原方法
      */
     @Inject(method = "awardRecipes", at = @At("HEAD"), cancellable = true)
     public void onAwardRecipes(Collection<RecipeHolder<?>> holders, CallbackInfoReturnable<Integer> cir) {
@@ -38,11 +38,11 @@ public class ServerPlayerMixin {
     }
 
     /**
-     * Intercepts {@code ServerPlayer.awardRecipesByKey(List)} at HEAD and cancels it,
-     * preventing recipe award packets from being sent for recipes identified by key.
+     * 在 {@code ServerPlayer.awardRecipesByKey(List)} 的 HEAD 处拦截并取消，
+     * 阻止为通过键标识的配方发送配方授予数据包。
      *
-     * @param recipes the recipe identifiers being awarded (ignored)
-     * @param ci      callback cancelling the original method
+     * @param recipes 即将被授予的配方标识（忽略）
+     * @param ci      取消原方法的回调
      */
     @Inject(method = "awardRecipesByKey", at = @At("HEAD"), cancellable = true)
     public void onAwardRecipesByKey(List<Identifier> recipes, CallbackInfo ci) {

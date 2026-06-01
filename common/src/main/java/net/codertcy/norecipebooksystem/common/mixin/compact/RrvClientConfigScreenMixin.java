@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(targets = "cc.cassian.rrv.common.gui.ClientConfigScreen")
 public class RrvClientConfigScreenMixin {
-    /** Private constructor — mixin classes are never instantiated directly. */
+    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private RrvClientConfigScreenMixin() {}
 
     @Inject(method = "init", at = @At("RETURN"))

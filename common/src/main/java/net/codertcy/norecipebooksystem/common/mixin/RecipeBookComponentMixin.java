@@ -18,13 +18,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(RecipeBookComponent.class)
 public class RecipeBookComponentMixin {
-    /** Private constructor — mixin classes are never instantiated directly. */
+    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private RecipeBookComponentMixin() {}
 
     /**
-     * Intercepts {@code isVisibleAccordingToBookData()} after the original logic runs.
-     * If a recipe viewer (JEI/RRV) is active on the server and the client's known recipe
-     * map is empty, returns {@code false} to keep the book hidden.
+     * 拦截 {@code isVisibleAccordingToBookData()}，在原方法执行完毕后再插入逻辑。
+     * 如果服务器端存在任意配方查看器（JEI/RRV），且客户端的已知配方映射为空，
+     * 则返回 {@code false}，以保持配方书隐藏。
      */
     @Inject(method = "isVisibleAccordingToBookData", at = @At("RETURN"), cancellable = true)
     private void onIsVisibleAccordingToBookData(CallbackInfoReturnable<Boolean> cir) {

@@ -15,10 +15,9 @@ public final class RecipeViewerHelper {
     private RecipeViewerHelper() {}
 
     /**
-     * Checks whether JEI is running on the connected server.
+     * 检测已连接服务器上是否运行 JEI。
      *
-     * @return {@code true} if JEI is installed on the client AND the connected server
-     *         reports {@code isJeiOnServer()} = true.
+     * @return {@code true} 表示客户端已安装 JEI 且所连服务器报告 {@code isJeiOnServer()} 为 true。
      */
     public static boolean isJeiOnServer() {
         try {
@@ -33,10 +32,9 @@ public final class RecipeViewerHelper {
     }
 
     /**
-     * Checks whether Reliable Recipe Viewer (RRV) is running on the connected server.
+     * 检测已连接服务器上是否运行 Reliable Recipe Viewer（RRV）。
      *
-     * @return {@code true} if RRV is installed on the client AND the connected server
-     *         has registered the {@code rrv:recipe_request} network channel.
+     * @return {@code true} 表示客户端已安装 RRV 且所连服务器已注册 {@code rrv:recipe_request} 网络通道。
      */
     public static boolean isRrvOnServer() {
         try {

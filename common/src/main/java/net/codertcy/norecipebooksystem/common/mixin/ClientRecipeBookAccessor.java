@@ -18,9 +18,9 @@ import java.util.Map;
 @Mixin(ClientRecipeBook.class)
 public interface ClientRecipeBookAccessor {
     /**
-     * Returns the internal map of known recipe display entries.
+     * 返回已知的配方展示条目的内部映射。
      *
-     * @return the {@code known} field, never null after initialisation
+     * @return {@code known} 字段，初始化后不会为 null
      */
     @Accessor("known")
     Map<RecipeDisplayId, RecipeDisplayEntry> getKnown();

@@ -23,14 +23,14 @@ import java.util.function.Predicate;
  */
 @Mixin(ServerRecipeBook.class)
 public class ServerRecipeBookMixin {
-    /** Private constructor — mixin classes are never instantiated directly. */
+    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private ServerRecipeBookMixin() {}
 
     /**
-     * Intercepts {@code ServerRecipeBook.addRecipes()} at HEAD and returns an empty
-     * {@link CompoundTag}, preventing any recipe data from being serialised.
+     * 在 {@code ServerRecipeBook.addRecipes()} 的 HEAD 处拦截，并返回一个空的
+     * {@link CompoundTag}，防止任何配方数据被序列化。
      *
-     * @param cir callback returning an empty tag, skipping the original method
+     * @param cir 返回空标签的回调，用以跳过原方法
      */
     @Inject(method = "addRecipes", at = @At("HEAD"), cancellable = true)
     public void onSave(CallbackInfoReturnable<CompoundTag> cir) {
@@ -38,12 +38,12 @@ public class ServerRecipeBookMixin {
     }
 
     /**
-     * Intercepts {@code ServerRecipeBook.loadUntrusted(Packed, Predicate)} at HEAD
-     * and cancels it, discarding any persisted recipe book data on load.
+     * 在 {@code ServerRecipeBook.loadUntrusted(Packed, Predicate)} 的 HEAD 处拦截
+     * 并取消，丢弃加载时传入的任何已持久化的配方书数据。
      *
-     * @param packed    the serialised recipe book data (ignored)
-     * @param predicate filter for which recipes to accept (ignored)
-     * @param ci        callback cancelling the original method
+     * @param packed    序列化后的配方书数据（忽略）
+     * @param predicate 用于过滤接受哪些配方的断言（忽略）
+     * @param ci        取消原方法的回调
      */
     @Inject(method = "loadUntrusted", at = @At("HEAD"), cancellable = true)
     public void onLoad(ServerRecipeBook.Packed packed, Predicate<ResourceKey<Recipe<?>>> predicate, CallbackInfo ci) {

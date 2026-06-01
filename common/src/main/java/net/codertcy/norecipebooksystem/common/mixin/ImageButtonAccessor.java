@@ -16,9 +16,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ImageButton.class)
 public interface ImageButtonAccessor {
     /**
-     * Returns the {@link WidgetSprites} assigned to this image button.
+     * 返回该图片按钮所分配的 {@link WidgetSprites}。
      *
-     * @return the sprites field, or null if not yet initialised
+     * @return sprites 字段；若尚未初始化则为 null
      */
     @Accessor("sprites")
     WidgetSprites getSprites();

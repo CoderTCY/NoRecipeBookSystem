@@ -24,23 +24,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(Screen.class)
 public class ScreenMixin {
-    /** Private constructor — mixin classes are never instantiated directly. */
+    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private ScreenMixin() {}
 
     /**
-     * Intercepts widget addition. If the widget is an {@link ImageButton} whose sprite
-     * matches {@code RecipeBookComponent#RECIPE_BUTTON_SPRITES}, and JEI is running on
-     * the server or the client's known recipe map is empty, the widget is discarded
-     * by returning {@code null}.
+     * 拦截组件添加逻辑。如果待添加的组件是 {@link ImageButton}，且其 sprite 与
+     * {@code RecipeBookComponent#RECIPE_BUTTON_SPRITES} 相匹配，同时服务器端运行着 JEI
+     * 或客户端的已知配方映射为空，则通过返回 {@code null} 丢弃该组件。
      *
-     * @param <T>    the combined widget type
-     * @param widget the widget being added to the screen
-     * @param cir    callback used to return {@code null} and skip addition
+     * @param <T>    组合后的组件类型
+     * @param widget 即将被加入界面的组件
+     * @param cir    用于返回 {@code null} 以跳过添加的回调
      */
     @Inject(method = "addRenderableWidget", at = @At("HEAD"), cancellable = true)
     public <T extends GuiEventListener & Renderable & NarratableEntry> void onWidgetAdded(T widget, CallbackInfoReturnable<T> cir) {
         if (widget instanceof ImageButton image && ((ImageButtonAccessor) image).getSprites() != null && ((ImageButtonAccessor) image).getSprites().equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES)) {
-            // Block recipe book button if JEI is active on server, or no recipe data was sent
+            // 如果服务器端 JEI 已启用，或尚未收到任何配方数据，则屏蔽配方书按钮
             if (RecipeViewerHelper.isJeiOnServer()) {
                 cir.setReturnValue(null);
                 return;

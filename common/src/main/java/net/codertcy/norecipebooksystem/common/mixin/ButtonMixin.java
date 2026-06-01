@@ -20,22 +20,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(Button.class)
 public class ButtonMixin {
-    /** Private constructor — mixin classes are never instantiated directly. */
+    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private ButtonMixin() {}
 
     /**
-     * Intercepts every {@code Button#onPress()} call. If the pressed button is the recipe
-     * book toggle button and JEI is detected on the server, or the client's known recipe
-     * map is empty, the press event is cancelled.
+     * 拦截所有 {@code Button#onPress()} 调用。如果按下的按钮是配方书开关按钮，
+     * 且检测到服务器端 JEI 已启用，或客户端的已知配方映射为空，则取消该按下事件。
      *
-     * @param ci injection callback used to cancel the press event
+     * @param ci 用于取消按下事件的注入回调
      */
     @Inject(method = "onPress", at = @At("HEAD"), cancellable = true)
     public void onPress(CallbackInfo ci) {
         Button button = (Button) (Object) this;
 
         if (button instanceof ImageButton image && ((ImageButtonAccessor) image).getSprites() != null && ((ImageButtonAccessor) image).getSprites().equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES)) {
-            // Block recipe book button press if JEI is active on server, or no recipe data was sent
+            // 如果服务器端 JEI 已启用，或尚未收到任何配方数据，则屏蔽配方书按钮的按下
             if (RecipeViewerHelper.isJeiOnServer()) {
                 ci.cancel();
                 return;
