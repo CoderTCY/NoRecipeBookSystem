@@ -11,14 +11,14 @@ package net.codertcy.norecipebooksystem.common;
  * this mod's recipe book removal behavior.
  */
 public class NoRecipeBookSystem {
-    /** No-op; this class only exposes static members. */
+    /** 禁止实例化；此类仅暴露静态成员。 */
     private NoRecipeBookSystem() {}
-    /** The mod ID used in fabric.mod.json and mods.toml. */
+    /** 在 fabric.mod.json 和 mods.toml 中使用的模组 ID。 */
     public static final String MODID = "norecipebooksystem";
 
     /**
-     * Called by platform-specific entry points (Fabric, Forge) during mod
-     * initialization. Currently a no-op; actual logic lives in mixins.
+     * 由各平台入口点（Fabric、Forge）在模组初始化期间调用。
+     * 当前为空操作；实际逻辑位于 Mixin 中。
      */
     public static void init() {
     }

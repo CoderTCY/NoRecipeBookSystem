@@ -21,15 +21,15 @@ import java.util.List;
  */
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private ServerPlayerMixin() {}
 
     /**
-     * Intercepts {@link ServerPlayer#awardRecipes(Collection)} and returns 0,
-     * preventing any recipe from being awarded.
+     * 拦截 {@link ServerPlayer#awardRecipes(Collection)} 并返回 0，
+     * 阻止任何配方被授予玩家。
      *
-     * @param holders the recipe holders being awarded (ignored)
-     * @param cir     callback info used to return 0
+     * @param holders 待授予的配方持有者（忽略）
+     * @param cir     回调信息，用于返回 0
      */
     @Inject(method = "awardRecipes", at = @At("HEAD"), cancellable = true)
     public void onAwardRecipes(Collection<RecipeHolder<?>> holders, CallbackInfoReturnable<Integer> cir) {
@@ -37,11 +37,11 @@ public class ServerPlayerMixin {
     }
 
     /**
-     * Intercepts {@link ServerPlayer#awardRecipesByKey(List)} and cancels it,
-     * preventing recipes from being awarded by resource location key.
+     * 拦截 {@link ServerPlayer#awardRecipesByKey(List)} 并取消，
+     * 阻止通过资源定位符键值授予配方。
      *
-     * @param recipes the recipe resource locations (ignored)
-     * @param ci      callback info used to cancel the award
+     * @param recipes 配方的资源定位符列表（忽略）
+     * @param ci      回调信息，用于取消授予操作
      */
     @Inject(method = "awardRecipesByKey", at = @At("HEAD"), cancellable = true)
     public void onAwardRecipesByKey(List<ResourceLocation> recipes, CallbackInfo ci) {

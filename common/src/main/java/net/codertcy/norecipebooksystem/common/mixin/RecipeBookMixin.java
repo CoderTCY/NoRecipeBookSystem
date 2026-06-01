@@ -15,15 +15,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(RecipeBook.class)
 public class RecipeBookMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private RecipeBookMixin() {}
 
     /**
-     * Intercepts {@link RecipeBook#copyOverData(RecipeBook)} and cancels it,
-     * preventing any recipe book state from being copied.
+     * 拦截 {@link RecipeBook#copyOverData(RecipeBook)} 并取消，
+     * 防止合成书状态在实例间复制。
      *
-     * @param pOther the source recipe book to copy from (ignored)
-     * @param ci     callback info used to cancel the copy
+     * @param pOther 被复制的源合成书（忽略）
+     * @param ci     回调信息，用于取消复制操作
      */
     @Inject(method = "copyOverData", at = @At("HEAD"), cancellable = true)
     public void onCopy(RecipeBook pOther, CallbackInfo ci) {

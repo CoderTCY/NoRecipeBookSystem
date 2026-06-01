@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Pseudo
 @Mixin(targets = "me.shedaniel.rei.impl.client.config.ConfigObjectImpl", priority = 2000)
 public abstract class REIConfigObjectMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private REIConfigObjectMixin() {}
 
     @Unique

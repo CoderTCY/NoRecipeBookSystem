@@ -38,7 +38,7 @@ import java.util.List;
 @Pseudo
 @Mixin(targets = "me.shedaniel.rei.impl.client.gui.widget.ConfigButtonWidget", priority = 2000)
 public abstract class REISubMenuMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private REISubMenuMixin() {}
 
     @Unique
@@ -85,13 +85,13 @@ public abstract class REISubMenuMixin {
                 subMenuEntriesField.set(entry, filtered);
             }
         } catch (Exception ignored) {
-            // Silently ignored — REI may be absent or the structure may have changed
+            // 反射静默失败——REI 可能不存在或内部结构已变更
         }
     }
 
     /**
-     * Checks whether a {@link Component}'s translation key matches the given key.
-     * Falls back to a string comparison on the rendered text.
+     * 检查 {@link Component} 的翻译键是否与给定键匹配。
+     * 若无法获取翻译键，则回退到对渲染文本的字符串比较。
      */
     @Unique
     private static boolean hasTranslationKey(Component component, String key) {
@@ -101,7 +101,7 @@ public abstract class REISubMenuMixin {
                 return key.equals(translatable.getKey());
             }
         }
-        // Fallback: compare against the rendered string
+        // 回退：与渲染后的字符串进行比较
         return key.equals(component.getString());
     }
 }

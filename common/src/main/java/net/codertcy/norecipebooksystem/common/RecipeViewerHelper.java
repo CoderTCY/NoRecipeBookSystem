@@ -8,16 +8,15 @@ package net.codertcy.norecipebooksystem.common;
  * {@link #isEmiLoaded()} from any mixin that needs to defer to EMI.
  */
 public final class RecipeViewerHelper {
-    /** No-op; static utility class. */
+    /** 禁止实例化；静态工具类。 */
     private RecipeViewerHelper() {}
 
     private static final boolean EMI_LOADED = probeEmi();
 
     /**
-     * Returns {@code true} if the EMI recipe viewer mod is available in the
-     * current classloader.
+     * 当前 classloader 中是否存在 EMI 配方查看器模组。
      *
-     * @return {@code true} when EMI is present
+     * @return EMI 已加载时返回 {@code true}
      */
     public static boolean isEmiLoaded() {
         return EMI_LOADED;

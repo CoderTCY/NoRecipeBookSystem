@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 @Pseudo
 @Mixin(targets = "dev.emi.emi.config.EmiConfig", priority = 2000)
 public abstract class EMIConfigMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private EMIConfigMixin() {}
 
     private static boolean patched = false;
@@ -48,7 +48,7 @@ public abstract class EMIConfigMixin {
         try {
             Class<?> configClass = Class.forName("dev.emi.emi.config.EmiConfig");
 
-            // ===== 1) Replace the ConfigEnum setter to intercept "default" =====
+            // ===== 1) 替换 ConfigEnum setter 以拦截 "default" 值 =====
             Field settersField = configClass.getDeclaredField("SETTERS");
             settersField.setAccessible(true);
             @SuppressWarnings("unchecked")
@@ -65,8 +65,7 @@ public abstract class EMIConfigMixin {
                             if ("setValue".equals(method.getName())) {
                                 Field field = (Field) args[2];
                                 if ("recipeBookAction".equals(field.getName())) {
-                                    // Access the CSS entry value via reflection to avoid
-                                    // a compile-time dependency on QDCSS
+                                    // 通过反射访问 CSS 条目值，避免对 QDCSS 的编译期依赖
                                     Object css = args[0];
                                     String annot = (String) args[1];
                                     Method cssGet = css.getClass().getMethod("get", String.class);
@@ -75,7 +74,7 @@ public abstract class EMIConfigMixin {
                                     String value = (String) entryGet.invoke(entry);
 
                                     if ("default".equals(value)) {
-                                        // Skip the write — field keeps its Java default (TOGGLE_CRAFTABLES)
+                                        // 跳过写入——字段保持 Java 默认值（TOGGLE_CRAFTABLES）
                                         return null;
                                     }
                                 }
@@ -85,7 +84,7 @@ public abstract class EMIConfigMixin {
                 setters.put(configEnumClass, wrappedSetter);
             }
 
-            // ===== 2) Register a UI filter to exclude DEFAULT from enum selection =====
+            // ===== 2) 注册 UI 过滤器，从枚举选择列表中排除 DEFAULT =====
             Field filtersField = configClass.getField("FILTERS");
             @SuppressWarnings("unchecked")
             Map<String, Predicate<?>> filters = (Map<String, Predicate<?>>) filtersField.get(null);
@@ -101,7 +100,7 @@ public abstract class EMIConfigMixin {
 
             patched = true;
         } catch (Exception ignored) {
-            // Silently ignored — EMI may be absent or the structure may have changed
+            // 静默忽略——EMI 可能不存在或内部结构已变更
         }
     }
 }

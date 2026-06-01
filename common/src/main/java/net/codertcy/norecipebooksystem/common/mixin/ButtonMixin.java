@@ -21,20 +21,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(Button.class)
 public class ButtonMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private ButtonMixin() {}
 
     /**
-     * Intercepts {@link Button#onPress()} and cancels it for the recipe book button.
+     * 拦截 {@link Button#onPress()}，阻止合成书按钮被按下。
      *
-     * <p>Delegates to EMI when EMI is present so that EMI's own recipe book
-     * configuration takes effect.
+     * <p>若 EMI 已加载则跳过，由 EMI 自行处理按钮行为。
      *
-     * @param ci callback info used to cancel the press
+     * @param ci 回调信息，用于取消按钮按下
      */
     @Inject(method = "onPress", at = @At("HEAD"), cancellable = true)
     public void onPress(CallbackInfo ci) {
-        if (RecipeViewerHelper.isEmiLoaded()) return; // EMI handles the button behavior
+        if (RecipeViewerHelper.isEmiLoaded()) return; // 由 EMI 处理按钮行为
 
         Button button = (Button) (Object) this;
 

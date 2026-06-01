@@ -25,22 +25,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(Screen.class)
 public class ScreenMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private ScreenMixin() {}
 
     /**
-     * Intercepts {@link Screen#addRenderableWidget} and blocks the recipe book
-     * button from being added to the screen.
+     * 拦截 {@link Screen#addRenderableWidget}，阻止合成书按钮被添加到屏幕。
      *
-     * <p>Delegates to EMI when EMI is present.
+     * <p>若 EMI 已加载则跳过，由 EMI 自行处理。
      *
-     * @param <T>    the widget type
-     * @param widget the widget being added
-     * @param cir    callback info used to return {@code null} and block the addition
+     * @param <T>    控件类型
+     * @param widget 正在添加的控件
+     * @param cir    回调信息，用于返回 {@code null} 并阻止添加
      */
     @Inject(method = "addRenderableWidget", at = @At("HEAD"), cancellable = true)
     public <T extends GuiEventListener & Renderable & NarratableEntry> void onWidgetAdded(T widget, CallbackInfoReturnable<T> cir) {
-        if (RecipeViewerHelper.isEmiLoaded()) return; // EMI handles the recipe book button behavior
+        if (RecipeViewerHelper.isEmiLoaded()) return; // 由 EMI 处理合成书按钮行为
 
         if (widget instanceof ImageButton image) {
             var sprites = ((ImageButtonAccessor) image).getSprites();

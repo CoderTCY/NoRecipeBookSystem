@@ -28,14 +28,14 @@ import java.util.List;
  */
 @Mixin(ServerRecipeBook.class)
 public class ServerRecipeBookMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private ServerRecipeBookMixin() {}
 
     /**
-     * Intercepts {@link ServerRecipeBook#toNbt()} and returns an empty
-     * {@link CompoundTag}, discarding all recipe book data on save.
+     * 拦截 {@link ServerRecipeBook#toNbt()} 并返回空的 {@link CompoundTag}，
+     * 丢弃所有合成书数据，阻止持久化保存。
      *
-     * @param cir callback info used to return the empty tag
+     * @param cir 回调信息，用于返回空标签
      */
     @Inject(method = "toNbt", at = @At("HEAD"), cancellable = true)
     public void onSave(CallbackInfoReturnable<CompoundTag> cir) {
@@ -43,12 +43,12 @@ public class ServerRecipeBookMixin {
     }
 
     /**
-     * Intercepts {@link ServerRecipeBook#fromNbt(CompoundTag, RecipeManager)}
-     * and cancels it, preventing saved recipe data from being loaded.
+     * 拦截 {@link ServerRecipeBook#fromNbt(CompoundTag, RecipeManager)}
+     * 并取消，阻止已保存的合成书数据被加载。
      *
-     * @param pTag           the NBT data to load from (ignored)
-     * @param pRecipeManager the recipe manager (ignored)
-     * @param ci             callback info used to cancel the load
+     * @param pTag           待加载的 NBT 数据（忽略）
+     * @param pRecipeManager 配方管理器（忽略）
+     * @param ci             回调信息，用于取消加载
      */
     @Inject(method = "fromNbt", at = @At("HEAD"), cancellable = true)
     public void onLoad(CompoundTag pTag, RecipeManager pRecipeManager, CallbackInfo ci) {
@@ -56,14 +56,13 @@ public class ServerRecipeBookMixin {
     }
 
     /**
-     * Intercepts {@link ServerRecipeBook#sendRecipes(ClientboundRecipePacket.State,
-     * ServerPlayer, List)} and cancels it, blocking recipe data from being sent
-     * to the client.
+     * 拦截 {@link ServerRecipeBook#sendRecipes(ClientboundRecipePacket.State,
+     * ServerPlayer, List)} 并取消，阻止配方数据发送给客户端。
      *
-     * @param pState   the sync state (ignored)
-     * @param pPlayer  the target player (ignored)
-     * @param pRecipes the recipes to send (ignored)
-     * @param ci       callback info used to cancel the send
+     * @param pState   同步状态（忽略）
+     * @param pPlayer  目标玩家（忽略）
+     * @param pRecipes 待发送的配方列表（忽略）
+     * @param ci       回调信息，用于取消发送
      */
     @Inject(method = "sendRecipes", at = @At("HEAD"), cancellable = true)
     public void onLoad(ClientboundRecipePacket.State pState, ServerPlayer pPlayer, List<ResourceLocation> pRecipes, CallbackInfo ci) {

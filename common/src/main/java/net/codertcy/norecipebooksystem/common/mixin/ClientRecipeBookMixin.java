@@ -17,16 +17,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(ClientRecipeBook.class)
 public class ClientRecipeBookMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private ClientRecipeBookMixin() {}
 
     /**
-     * Intercepts {@link ClientRecipeBook#setupCollections(Iterable, RegistryAccess)}
-     * and cancels it so the recipe book stays empty on the client.
+     * 拦截 {@link ClientRecipeBook#setupCollections(Iterable, RegistryAccess)}
+     * 并取消，使客户端合成书始终保持为空。
      *
-     * @param iterable      the recipes to process (ignored)
-     * @param registryAccess dynamic registry access (ignored)
-     * @param ci            callback info used to cancel the setup
+     * @param iterable      待处理的配方列表（忽略）
+     * @param registryAccess 动态注册表访问器（忽略）
+     * @param ci            回调信息，用于取消操作
      */
     @Inject(method = "setupCollections", at = @At("HEAD"), cancellable = true)
     public void onSetup(Iterable<Recipe<?>> iterable, RegistryAccess registryAccess, CallbackInfo ci) {

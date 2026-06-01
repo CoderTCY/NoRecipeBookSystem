@@ -30,7 +30,7 @@ import java.util.List;
 @Pseudo
 @Mixin(targets = "me.shedaniel.rei.impl.client.gui.config.REIConfigScreen", priority = 2000)
 public abstract class REIConfigScreenMixin {
-    /** No-op; this class is a mixin target and should not be instantiated. */
+    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private REIConfigScreenMixin() {}
 
     @Unique
@@ -41,13 +41,13 @@ public abstract class REIConfigScreenMixin {
     private static final String COMPOSITE_OPTION_CLASS = "me.shedaniel.rei.impl.client.gui.config.options.CompositeOption";
 
     /**
-     * Intercepts the {@code categories} argument at constructor entry,
-     * walks {@code category → group → option} and removes the entry matching
-     * {@link #TARGET_OPTION_ID}.
+     * 在构造函数入口拦截 {@code categories} 参数，
+     * 遍历 {@code category → group → option} 树并移除与
+     * {@link #TARGET_OPTION_ID} 匹配的条目。
      *
-     * <p>We modify at {@code @At("HEAD")} because the constructor immediately calls
-     * {@code CollectionUtils.map(categories, OptionCategory::copy)}, so the
-     * copied trees are already clean.
+     * <p>选择在 {@code @At("HEAD")} 处修改，因为构造函数内部会立即调用
+     * {@code CollectionUtils.map(categories, OptionCategory::copy)}，
+     * 确保拷贝后的树已经排除了该选项。
      */
     @ModifyVariable(
             method = "<init>(Lnet/minecraft/client/gui/screens/Screen;Ljava/util/List;)V",
@@ -84,7 +84,7 @@ public abstract class REIConfigScreenMixin {
                 }
             }
         } catch (Exception ignored) {
-            // Reflection failed silently — REI may be absent or the structure may have changed
+            // 反射静默失败——REI 可能不存在或内部结构已变更
         }
         return categories;
     }
@@ -109,4 +109,3 @@ public abstract class REIConfigScreenMixin {
         }
     }
 }
-

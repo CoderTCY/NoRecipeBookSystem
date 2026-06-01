@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(NoRecipeBookSystem.MODID)
 public class NoRecipeBookSystemForge {
     /**
-     * Called by the Forge mod loading framework to initialise the mod.
-     * Delegates to {@link NoRecipeBookSystem#init()}.
+     * 由 Forge 模组加载框架调用以初始化模组。
+     * 委托给 {@link NoRecipeBookSystem#init()}。
      */
     public NoRecipeBookSystemForge() {
         NoRecipeBookSystem.init();
