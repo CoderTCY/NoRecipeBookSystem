@@ -1,6 +1,5 @@
 package net.codertcy.norecipebooksystem.common.mixin;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.stats.ServerRecipeBook;
 import net.minecraft.world.item.crafting.Recipe;
@@ -13,13 +12,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.function.Predicate;
 
 /**
- * Neutralises the server-side recipe book persistence.
+ * Disables all server-side recipe book operations.
  *
- * <p>Vanilla Minecraft persists the player's recipe book state as a
- * {@link CompoundTag} via {@code addRecipes} / {@code loadUntrusted}.
- * This mixin ensures the saved data is always empty ({@code addRecipes}
- * returns an empty tag) and loaded data is discarded ({@code loadUntrusted}
- * is cancelled), so the recipe book stays clean across sessions.
+ * <p>Two methods are intercepted:
+ * <ul>
+ *   <li>{@code addRecipes} — returns 0 so no recipes are added or sent to the client</li>
+ *   <li>{@code loadUntrusted} — cancels loading of saved recipe data</li>
+ * </ul>
+ * Together these ensure the recipe book never persists, synchronises, or awards recipes.
  */
 @Mixin(ServerRecipeBook.class)
 public class ServerRecipeBookMixin {
@@ -27,14 +27,15 @@ public class ServerRecipeBookMixin {
     private ServerRecipeBookMixin() {}
 
     /**
-     * 在 {@code ServerRecipeBook.addRecipes()} 的 HEAD 处拦截，并返回一个空的
-     * {@link CompoundTag}，防止任何配方数据被序列化。
+     * Intercepts {@code ServerRecipeBook.addRecipes()} at HEAD and returns 0,
+     * preventing any recipes from being added to {@code known}/{@code highlight},
+     * any network packets from being sent, and any advancement criteria from firing.
      *
-     * @param cir 返回空标签的回调，用以跳过原方法
+     * @param cir callback to return 0 and skip the original method
      */
     @Inject(method = "addRecipes", at = @At("HEAD"), cancellable = true)
-    public void onSave(CallbackInfoReturnable<CompoundTag> cir) {
-        cir.setReturnValue(new CompoundTag());
+    public void onAddRecipes(CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(0);
     }
 
     /**
