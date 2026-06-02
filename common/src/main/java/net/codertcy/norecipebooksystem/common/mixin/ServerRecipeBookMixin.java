@@ -5,6 +5,7 @@ import net.minecraft.network.protocol.game.ClientboundRecipePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerRecipeBook;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,24 +13,36 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Mixin that disables all persistence and network sync of the server-side
- * recipe book.
+ * Disables all server-side recipe book operations.
  *
- * <p>Three methods are intercepted:
+ * <p>Four methods are intercepted:
  * <ul>
+ *   <li>{@code addRecipes} — returns 0 so no recipes are added or sent</li>
  *   <li>{@code toNbt} — returns an empty tag instead of saving recipe data</li>
  *   <li>{@code fromNbt} — cancels loading of saved recipe data</li>
  *   <li>{@code sendRecipes} — cancels sending recipes to the client</li>
  * </ul>
- * Together these ensure the recipe book never persists or synchronises.
  */
 @Mixin(ServerRecipeBook.class)
 public class ServerRecipeBookMixin {
-    /** 禁止实例化；此类仅供 Mixin 注入使用。 */
+    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private ServerRecipeBookMixin() {}
+
+    /**
+     * Intercepts {@code ServerRecipeBook.addRecipes()} at HEAD and returns 0,
+     * preventing any recipes from being added to {@code known}/{@code highlight},
+     * any network packets from being sent, and any advancement criteria from firing.
+     *
+     * @param cir callback to return 0 and skip the original method
+     */
+    @Inject(method = "addRecipes", at = @At("HEAD"), cancellable = true)
+    public void onAddRecipes(Collection<RecipeHolder<?>> recipes, ServerPlayer player, CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(0);
+    }
 
     /**
      * 拦截 {@link ServerRecipeBook#toNbt()} 并返回空的 {@link CompoundTag}，
@@ -65,7 +78,7 @@ public class ServerRecipeBookMixin {
      * @param ci       回调信息，用于取消发送
      */
     @Inject(method = "sendRecipes", at = @At("HEAD"), cancellable = true)
-    public void onLoad(ClientboundRecipePacket.State pState, ServerPlayer pPlayer, List<ResourceLocation> pRecipes, CallbackInfo ci) {
+    public void onSendRecipes(ClientboundRecipePacket.State pState, ServerPlayer pPlayer, List<ResourceLocation> pRecipes, CallbackInfo ci) {
         ci.cancel();
     }
 }

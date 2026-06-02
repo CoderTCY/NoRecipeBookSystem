@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 /**
  * Accessor mixin that exposes the {@code sprites} field of {@link ImageButton}.
  *
- * <p>Used by {@link ButtonMixin} and {@link ScreenMixin} to identify the recipe
- * book button by comparing its sprite set with
+ * <p>Used by {@link ScreenMixin} to identify the recipe book button
+ * by comparing its sprite set with
  * {@code RecipeBookComponent.RECIPE_BUTTON_SPRITES}.
  */
 @Mixin(ImageButton.class)
