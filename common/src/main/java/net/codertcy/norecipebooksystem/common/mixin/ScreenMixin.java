@@ -53,7 +53,7 @@ public class ScreenMixin {
     @Unique
     static boolean shouldSuppressRecipeBookButton(Object widget) {
         if (!isRecipeBookButton(widget)) return false;
-        if (RecipeViewerHelper.isJeiOnServer()) return true;
+        if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvReady() || RecipeViewerHelper.isEivReady()) return true;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             ClientRecipeBook book = (ClientRecipeBook) mc.player.getRecipeBook();

@@ -28,7 +28,7 @@ public class RecipeBookComponentMixin {
      */
     @Inject(method = "isVisibleAccordingToBookData", at = @At("RETURN"), cancellable = true)
     private void onIsVisibleAccordingToBookData(CallbackInfoReturnable<Boolean> cir) {
-        if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvOnServer()) {
+        if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvReady() || RecipeViewerHelper.isEivReady()) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null) {
                 ClientRecipeBook book = (ClientRecipeBook) mc.player.getRecipeBook();
