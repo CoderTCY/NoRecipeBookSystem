@@ -28,6 +28,6 @@ public class RrvClientConfigMixin {
             require = 0
     )
     private void onIsRecipeBookButton(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(RecipeViewerHelper.isRrvOnServer());
+        cir.setReturnValue(RecipeViewerHelper.isRrvReady());
     }
 }

@@ -18,6 +18,18 @@ import java.util.Map;
  * <p>If the target mod is not installed, or not connected, safely returns {@code false}.
  */
 public final class RecipeViewerHelper {
+    /**
+     * 基于反射的配方视图模组检测工具类，用于判断已连接服务器上是否运行了
+     * JEI / RRV / EIV 等配方视图模组。
+     *
+     * <p>所有方法均使用纯反射实现，对任何配方视图模组均无编译期依赖。
+     * 支持所有加载器（Fabric、NeoForge、Forge）。
+     *
+     * <p>{@code Method}/{@code Field} 句柄在首次成功查找后被缓存，避免热路径
+     * （例如每 tick 可见性检查）上重复的 {@code Class.forName} 开销。
+     *
+     * <p>若目标模组未安装或未连接，安全地返回 {@code false}。
+     */
     private RecipeViewerHelper() {}
 
     // ── JEI reflection handles (cached) ──────────────────────────────────────
