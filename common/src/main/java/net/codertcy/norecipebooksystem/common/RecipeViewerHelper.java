@@ -62,8 +62,6 @@ public final class RecipeViewerHelper {
     private static Class<?> sRrvInternalMgrClass;
     private static Field sRrvInternalMgrInstance;
     private static Field sRrvRecipesSynced;
-    private static Method sRrvStatusMethod;
-    private static Method sRrvStatusIsIdle;
     private static Class<?> sRrvCacheClass;
     private static Field sRrvCacheInstance;
     private static Field sRrvServerEntryMap;
@@ -103,8 +101,6 @@ public final class RecipeViewerHelper {
                 // recipesSynced is a private boolean field
                 sRrvRecipesSynced = sRrvInternalMgrClass.getDeclaredField("recipesSynced");
                 sRrvRecipesSynced.setAccessible(true);
-                sRrvStatusMethod = sRrvInternalMgrClass.getMethod("status");
-
                 sRrvCacheClass = Class.forName(
                         "cc.cassian.rrv.client.recipe.ClientRecipeCache");
                 sRrvCacheInstance = sRrvCacheClass.getField("INSTANCE");
@@ -127,14 +123,7 @@ public final class RecipeViewerHelper {
             Object internalMgr = sRrvInternalMgrInstance.get(null);
             if (!(boolean) sRrvRecipesSynced.get(internalMgr)) return false;
 
-            // Step 3: Actively syncing → server is responding
-            Object status = sRrvStatusMethod.invoke(internalMgr);
-            if (sRrvStatusIsIdle == null) {
-                sRrvStatusIsIdle = status.getClass().getMethod("isIdle");
-            }
-            if (!(boolean) sRrvStatusIsIdle.invoke(status)) return true;
-
-            // Step 4: Server data confirmed in cache (guards against stale recipesSynced)
+            // Step 3: Server data confirmed in cache (guards against stale recipesSynced)
             Map<?, ?> serverEntryMap = (Map<?, ?>) sRrvServerEntryMap.get(cache);
             if (!serverEntryMap.isEmpty()) return true;
 
@@ -149,9 +138,6 @@ public final class RecipeViewerHelper {
     private static Class<?> sEivCacheClass;
     private static Field sEivCacheInstance;
     private static Field sEivRecipeMapField;
-    private static Object sEivMgr;
-    private static Method sEivStatusMethod;
-    private static Method sEivStatusIsIdle;
 
     /**
      * 检测 Extended Item View（EIV）是否已就绪。
@@ -176,11 +162,6 @@ public final class RecipeViewerHelper {
                 sEivCacheInstance = sEivCacheClass.getField("INSTANCE");
                 sEivRecipeMapField = sEivCacheClass.getDeclaredField("recipeMap");
                 sEivRecipeMapField.setAccessible(true);
-
-                Class<?> mgrClass = Class.forName("de.crafty.eiv.common.recipe.ClientRecipeManager");
-                Field mgrInstance = mgrClass.getField("INSTANCE");
-                sEivMgr = mgrInstance.get(null);
-                sEivStatusMethod = mgrClass.getMethod("status");
             }
 
             // Check 1: recipe cache already populated → server sent data
@@ -188,12 +169,8 @@ public final class RecipeViewerHelper {
             Map<?, ?> recipeMap = (Map<?, ?>) sEivRecipeMapField.get(cache);
             if (!recipeMap.isEmpty()) return true;
 
-            // Check 2: EIV is currently syncing → server is responding
-            Object status = sEivStatusMethod.invoke(sEivMgr);
-            if (sEivStatusIsIdle == null) {
-                sEivStatusIsIdle = status.getClass().getMethod("isIdle");
-            }
-            return !(boolean) sEivStatusIsIdle.invoke(status);
+            // Cache empty → not ready (was previously checking status.isIdle)
+            return false;
         } catch (Exception e) {
             return false;
         }

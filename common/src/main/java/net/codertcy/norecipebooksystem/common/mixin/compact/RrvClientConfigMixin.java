@@ -1,24 +1,25 @@
 package net.codertcy.norecipebooksystem.common.mixin.compact;
 
-import net.codertcy.norecipebooksystem.common.RecipeViewerHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Forces RRV's {@code recipeBookButton} config to match whether the server has RRV installed.
+ * Forces RRV's {@code isRecipeBookButton()} to always return {@code true}, and
+ * prevents {@code setRecipeBookButton(boolean)} from making any changes.
  *
- * <ul>
- *   <li>Server has RRV ({@code rrv:recipe_request} channel registered) → button opens RRV overlay</li>
- *   <li>Server does NOT have RRV → button opens vanilla recipe book</li>
- * </ul>
+ * <p>The config screen button is disabled by {@link RrvClientConfigScreenMixin}
+ * so the user cannot even attempt to change this value through the UI.
  *
- * This mixin is optional ({@code require = 0}) — if RRV is not installed, it is silently skipped.
+ * <p>{@code RecipeViewerHelper} does not influence this config in any way.
+ *
+ * <p>This mixin is optional ({@code require = 0}) — if RRV is not installed,
+ * it is silently skipped.
  */
 @Mixin(targets = "cc.cassian.rrv.common.config.instances.ClientConfig")
 public class RrvClientConfigMixin {
-    /** 私有构造方法 —— mixin 类不会被直接实例化。 */
     private RrvClientConfigMixin() {}
 
     @Inject(
@@ -28,6 +29,16 @@ public class RrvClientConfigMixin {
             require = 0
     )
     private void onIsRecipeBookButton(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(RecipeViewerHelper.isRrvReady());
+        cir.setReturnValue(true);
+    }
+
+    @Inject(
+            method = "setRecipeBookButton",
+            at = @At("HEAD"),
+            cancellable = true,
+            require = 0
+    )
+    private void onSetRecipeBookButton(@SuppressWarnings("unused") boolean value, CallbackInfo ci) {
+        ci.cancel();
     }
 }

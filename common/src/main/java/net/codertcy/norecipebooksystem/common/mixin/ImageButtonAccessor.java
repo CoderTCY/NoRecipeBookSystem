@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
  * Accessor mixin for {@link ImageButton} that exposes the private
  * {@code sprites} field.
  *
- * <p>This is used by {@link ScreenMixin} and {@link ButtonMixin} to identify
+ * <p>This is used by {@link ScreenMixin} to identify
  * whether a given {@link ImageButton} is the recipe book toggle button by
  * comparing its sprites against {@code RecipeBookComponent#RECIPE_BUTTON_SPRITES}.
  */

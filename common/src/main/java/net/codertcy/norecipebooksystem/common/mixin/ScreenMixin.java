@@ -51,7 +51,7 @@ public class ScreenMixin {
      * @return {@code true} if the widget is the recipe book button and should be hidden
      */
     @Unique
-    static boolean shouldSuppressRecipeBookButton(Object widget) {
+    private static boolean shouldSuppressRecipeBookButton(Object widget) {
         if (!isRecipeBookButton(widget)) return false;
         if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvReady() || RecipeViewerHelper.isEivReady()) return true;
         Minecraft mc = Minecraft.getInstance();
@@ -68,7 +68,7 @@ public class ScreenMixin {
      * against {@link RecipeBookComponent#RECIPE_BUTTON_SPRITES}.
      */
     @Unique
-    static boolean isRecipeBookButton(Object widget) {
+    private static boolean isRecipeBookButton(Object widget) {
         if (widget instanceof net.minecraft.client.gui.components.ImageButton image) {
             var sprites = ((ImageButtonAccessor) image).getSprites();
             return sprites != null && sprites.equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES);
