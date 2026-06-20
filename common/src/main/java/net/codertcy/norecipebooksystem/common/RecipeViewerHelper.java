@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * Reflection-based utility to detect whether recipe viewer mods (JEI, RRV, EIV)
+ * Reflection-based utility to detect whether recipe viewer mods (JEI, RRV, REI, EIV)
  * are running on the connected server.
  *
  * <p>All methods use pure reflection — zero compile-time dependency on any recipe viewer mod.
@@ -20,10 +20,14 @@ import java.util.Map;
 public final class RecipeViewerHelper {
     /**
      * 基于反射的配方视图模组检测工具类，用于判断已连接服务器上是否运行了
-     * JEI / RRV / EIV 等配方视图模组。
+     * JEI / RRV / REI / EIV 等配方视图模组。
      *
      * <p>所有方法均使用纯反射实现，对任何配方视图模组均无编译期依赖。
      * 支持所有加载器（Fabric、NeoForge、Forge）。
+ *
+ * <p>REI（Roughly Enough Items）仅检测客户端是否安装了 REI，
+ * 因为 REI 在客户端安装后就会接管配方显示，
+ * 无需等待服务端同步。
      *
      * <p>{@code Method}/{@code Field} 句柄在首次成功查找后被缓存，避免热路径
      * （例如每 tick 可见性检查）上重复的 {@code Class.forName} 开销。
@@ -132,6 +136,33 @@ public final class RecipeViewerHelper {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // ── REI reflection handles (cached) ──────────────────────────────────────
+    private static boolean sReiChecked;
+    private static boolean sReiInstalled;
+
+    /**
+     * 检测客户端是否安装了 REI（Roughly Enough Items）。
+     *
+     * <p>REI 与 JEI 不同，它没有暴露服务端检测的 API。
+     * 但只要客户端安装了 REI，它就会接管配方显示（即使服务端没有安装
+     * REI，REI 也会通过本地回退显示配方）。
+     * 因此直接检查 REI 客户端核心类是否可加载即可。
+     *
+     * @return {@code true} 表示客户端已安装 REI
+     */
+    public static boolean isReiReady() {
+        if (!sReiChecked) {
+            sReiChecked = true;
+            try {
+                Class.forName("me.shedaniel.rei.api.client.REIRuntime");
+                sReiInstalled = true;
+            } catch (Exception e) {
+                sReiInstalled = false;
+            }
+        }
+        return sReiInstalled;
     }
 
     // ── EIV reflection handles (cached) ──────────────────────────────────────

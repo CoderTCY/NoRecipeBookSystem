@@ -6,7 +6,10 @@
   "refmap": "${mod_id}.refmap.json",
   "client": [
     "RrvClientConfigMixin",
-    "RrvClientConfigScreenMixin"
+    "RrvClientConfigScreenMixin",
+    "REIConfigObjectMixin",
+    "REIConfigScreenMixin",
+    "REISubMenuMixin"
   ],
   "injectors": {
     "defaultRequire": 0

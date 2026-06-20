@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Suppresses the vanilla recipe book overlay when a recipe viewer (JEI/RRV/EIV)
+ * Suppresses the vanilla recipe book overlay when a recipe viewer (JEI/RRV/REI/EIV)
  * is installed and ready. Matches the behavior of {@link ScreenMixin} which
  * suppresses the toggle button under the same conditions.
  */
@@ -24,7 +24,7 @@ public class RecipeBookComponentMixin {
      */
     @Inject(method = "isVisibleAccordingToBookData", at = @At("RETURN"), cancellable = true)
     private void onIsVisibleAccordingToBookData(CallbackInfoReturnable<Boolean> cir) {
-        if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvReady() || RecipeViewerHelper.isEivReady()) {
+        if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvReady() || RecipeViewerHelper.isReiReady() || RecipeViewerHelper.isEivReady()) {
             cir.setReturnValue(false);
         }
     }
