@@ -18,7 +18,7 @@ tasks.register('universalJar', Jar) {
     // NeoForge jar — common classes + neoforge entry + neoforge.mods.toml
     from(zipTree(project(':neoforge').tasks.named('jar').flatMap { it.archiveFile }))
 
-    // Both jars contain the same common classes (26.1 is deobfuscated, no remapping difference).
+    // Both jars contain the same named common classes; no remapping difference.
     // Duplicate metadata (fabric.mod.json vs META-INF/neoforge.mods.toml) naturally coexist.
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
