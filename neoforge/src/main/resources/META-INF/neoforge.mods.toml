@@ -14,7 +14,7 @@ iconFile = "pack.png"
 config = "${mod_id}.mixins.json"
 
 [[mixins]]
-config = "${mod_id}.compact.mixins.json"
+config = "${mod_id}.neoforge.compact.mixins.json"
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"

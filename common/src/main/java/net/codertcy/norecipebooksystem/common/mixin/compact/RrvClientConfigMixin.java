@@ -15,10 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  *
  * <p>{@code RecipeViewerHelper} does not influence this config in any way.
  *
- * <p>This mixin is optional ({@code require = 0}) — if RRV is not installed,
- * it is silently skipped.
+ * <p>The client compatibility plugin enables this mixin only when RRV is installed.
  */
-@Mixin(targets = "cc.cassian.rrv.common.config.instances.ClientConfig")
+@Mixin(targets = "cc.cassian.rrv.common.config.instances.ClientConfig", remap = false)
 public class RrvClientConfigMixin {
     private RrvClientConfigMixin() {}
 

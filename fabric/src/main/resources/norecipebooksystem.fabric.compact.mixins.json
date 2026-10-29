@@ -1,15 +1,18 @@
 {
   "required": false,
   "package": "net.codertcy.norecipebooksystem.common.mixin.compact",
+  "plugin": "net.codertcy.norecipebooksystem.fabric.compat.FabricRecipeViewerMixinPlugin",
   "compatibilityLevel": "JAVA_25",
   "minVersion": "0.8",
   "refmap": "${mod_id}.refmap.json",
   "client": [
     "RrvClientConfigMixin",
     "RrvClientConfigScreenMixin",
+    "RrvClientRecipeCacheAccessor",
     "REIConfigObjectMixin",
     "REIConfigScreenMixin",
-    "REISubMenuMixin"
+    "REISubMenuMixin",
+    "REISubMenuEntryAccessor"
   ],
   "injectors": {
     "defaultRequire": 0

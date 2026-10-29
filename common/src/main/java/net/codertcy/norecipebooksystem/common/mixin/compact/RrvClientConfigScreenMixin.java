@@ -17,14 +17,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * {@link CycleButton} whose display message starts with the setting's display
  * name ({@code "Recipe Book Button"}), then sets {@code active = false}.
  *
- * <p>This mixin is optional ({@code require = 0}) — if RRV is not installed,
- * it is silently skipped.
+ * <p>The client compatibility plugin enables this mixin only when RRV is installed.
  */
-@Mixin(targets = "cc.cassian.rrv.common.gui.ClientConfigScreen")
+@Mixin(targets = "cc.cassian.rrv.common.gui.ClientConfigScreen", remap = false)
 public class RrvClientConfigScreenMixin {
     private RrvClientConfigScreenMixin() {}
 
-    @Inject(method = "init", at = @At("RETURN"), require = 0)
+    @Inject(method = "init", at = @At("RETURN"), remap = false, require = 0)
     private void onInit(CallbackInfo ci) {
         Screen screen = (Screen) (Object) this;
         String settingName = Component.translatable("rrv.client_settings.recipe_book_button").getString();

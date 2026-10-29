@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Prevents the recipe book toggle button from being added to the screen when
- * a recipe viewer (JEI/RRV/REI/EIV) is active, or when no recipe data (known recipes)
+ * a recipe viewer (JEI/RRV/REI) is active, or when no recipe data (known recipes)
  * has been received from the server.
  *
  * <p>This mixin intercepts {@link Screen#addRenderableWidget} and removes the
@@ -53,7 +53,7 @@ public class ScreenMixin {
     @Unique
     private static boolean shouldSuppressRecipeBookButton(Object widget) {
         if (!isRecipeBookButton(widget)) return false;
-        if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvReady() || RecipeViewerHelper.isReiReady() || RecipeViewerHelper.isEivReady()) return true;
+        if (RecipeViewerHelper.isJeiOnServer() || RecipeViewerHelper.isRrvReady() || RecipeViewerHelper.isReiReady()) return true;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             ClientRecipeBook book = (ClientRecipeBook) mc.player.getRecipeBook();

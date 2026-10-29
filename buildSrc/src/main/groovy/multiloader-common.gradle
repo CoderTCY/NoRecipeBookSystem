@@ -3,6 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
+// Include external patch/AT data in NFRT cache keys when switching NeoForge versions.
+pluginManager.withPlugin('net.neoforged.moddev') {
+    project.extensions.getByName('neoFormRuntime').version = '2.0.31'
+}
+
 base {
     archivesName = "${mod_id}-${project.name}-${minecraft_version}"
 }
@@ -29,6 +34,22 @@ repositories {
         name = 'BlameJared'
         url = 'https://maven.blamejared.com'
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter { includeGroup('maven.modrinth') }
+    }
+}
+
+dependencies {
+    // Real 26.3 implementation APIs; compile-only in every loader, never bundled.
+    compileOnly('maven.modrinth:jei:qOH7oN21') { transitive = false } // 31.17.0.98 NeoForge (beta)
+    compileOnly('maven.modrinth:nfn13YXA:uwE0PJmc') { transitive = false } // REI 26.3.824 NeoForge (beta)
+    compileOnly('maven.modrinth:5VolwT6c:PaMonYLb') { transitive = false } // RRV 8.11.2+26.3 NeoForge
 }
 
 sourcesJar {
