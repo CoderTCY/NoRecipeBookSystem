@@ -3,6 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
+// Include external patch/AT data in NFRT cache keys when switching NeoForge versions.
+pluginManager.withPlugin('net.neoforged.moddev') {
+    project.extensions.getByName('neoFormRuntime').version = '2.0.31'
+}
+
 base {
     archivesName = "${mod_id}-${project.name}-${minecraft_version}"
 }
@@ -29,6 +34,23 @@ repositories {
         name = 'BlameJared'
         url = 'https://maven.blamejared.com'
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter { includeGroup('maven.modrinth') }
+    }
+}
+
+dependencies {
+    // All projects compile the common sources. These real 26.1.2 releases are never bundled.
+    compileOnly('maven.modrinth:jei:DkThsUkw') { transitive = false } // 29.53.0.112 NeoForge
+    compileOnly('maven.modrinth:nfn13YXA:isd1MxO2') { transitive = false } // REI 26.1.819 NeoForge
+    compileOnly('maven.modrinth:5VolwT6c:FZXHm7mi') { transitive = false } // RRV 8.11.2+26.1.2 NeoForge
+    compileOnly('maven.modrinth:zAvmADy9:komCGu8f') { transitive = false } // EIV 8.0.0+26.1.2 NeoForge
 }
 
 sourcesJar {
@@ -73,12 +95,14 @@ processResources {
             ,
             'fabric_version'               : fabric_version,
             'fabric_loader_version'        : fabric_loader_version,
+            'fabric_loader_version_range'  : fabric_loader_version_range,
             'mod_name'                     : mod_name,
             'mod_author'                   : mod_author,
             'mod_id'                       : mod_id,
             'license'                      : license,
             'description'                  : project.description,
             'neoforge_version'             : neoforge_version,
+            'neoforge_version_range'        : neoforge_version_range,
             'neoforge_loader_version_range': neoforge_loader_version_range,
             'credits'                      : credits,
             'java_version'                 : java_version

@@ -17,10 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * {@link CycleButton} whose display message starts with the setting's display
  * name ({@code "Recipe Book Button"}), then sets {@code active = false}.
  *
- * <p>This mixin is optional ({@code require = 0}) — if RRV is not installed,
- * it is silently skipped.
+ * <p>The loader mixin plugin enables this only when RRV is installed on the client.
  */
-@Mixin(targets = "cc.cassian.rrv.common.gui.ClientConfigScreen")
+@Mixin(targets = "cc.cassian.rrv.common.gui.ClientConfigScreen", remap = false)
 public class RrvClientConfigScreenMixin {
     private RrvClientConfigScreenMixin() {}
 

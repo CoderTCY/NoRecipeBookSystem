@@ -1,11 +1,11 @@
 package net.codertcy.norecipebooksystem.common.mixin.compact;
 
+import me.shedaniel.rei.impl.client.gui.config.options.OptionCategory;
+import net.codertcy.norecipebooksystem.common.compat.ReiCompat;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -26,22 +26,13 @@ import java.util.List;
  * @see REIConfigObjectMixin Overrides the getter at the API level
  * @see REISubMenuMixin    Removes the toggle from the gear icon quick menu
  */
-@Mixin(targets = "me.shedaniel.rei.impl.client.gui.config.REIConfigScreen", priority = 2000)
+@Mixin(targets = "me.shedaniel.rei.impl.client.gui.config.REIConfigScreen", priority = 2000, remap = false)
 public abstract class REIConfigScreenMixin {
     /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private REIConfigScreenMixin() {}
 
-    @Unique
-    private static final String TARGET_OPTION_ID = "accessibility.vanilla_recipe_book";
-
     /**
-     * 在构造函数入口拦截 {@code categories} 参数，
-     * 遍历 {@code category → group → option} 树并移除与
-     * {@link #TARGET_OPTION_ID} 匹配的条目。
-     *
-     * <p>选择在 {@code @At("HEAD")} 处修改，因为构造函数内部会立即调用
-     * {@code CollectionUtils.map(categories, OptionCategory::copy)}，
-     * 确保拷贝后的树已经排除了该选项。
+     * Removes the vanilla recipe book option before REI copies the category tree.
      */
     @ModifyVariable(
             method = "<init>(Lnet/minecraft/client/gui/screens/Screen;Ljava/util/List;)V",
@@ -49,57 +40,7 @@ public abstract class REIConfigScreenMixin {
             argsOnly = true,
             remap = false
     )
-    private static List<?> modifyCategoriesParameter(List<?> categories) {
-        if (categories == null) {
-            return null;
-        }
-        try {
-            Method groupGetOptions = findMethod("me.shedaniel.rei.impl.client.gui.config.options.OptionGroup", "getOptions");
-            Method optionGetId = findMethod("me.shedaniel.rei.impl.client.gui.config.options.CompositeOption", "getId");
-
-            for (Object category : categories) {
-                List<?> groups = (List<?>) callMethod(category, "getGroups");
-                if (groups == null) continue;
-
-                for (Object group : groups) {
-                    if (group == null) continue;
-                    List<?> options = (List<?>) groupGetOptions.invoke(group);
-                    if (options == null) continue;
-
-                    options.removeIf(option -> {
-                        if (option == null) return false;
-                        try {
-                            String id = (String) optionGetId.invoke(option);
-                            return TARGET_OPTION_ID.equals(id);
-                        } catch (Exception e) {
-                            return false;
-                        }
-                    });
-                }
-            }
-        } catch (Exception ignored) {
-            // 反射静默失败——REI 可能不存在或内部结构已变更
-        }
-        return categories;
-    }
-
-    @Unique
-    private static Method findMethod(String className, String methodName) {
-        try {
-            Class<?> clazz = Class.forName(className);
-            return clazz.getMethod(methodName);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Unique
-    private static Object callMethod(Object obj, String methodName) {
-        try {
-            Method method = obj.getClass().getMethod(methodName);
-            return method.invoke(obj);
-        } catch (Exception e) {
-            return null;
-        }
+    private static List<OptionCategory> modifyCategoriesParameter(List<OptionCategory> categories) {
+        return ReiCompat.removeRecipeBookOption(categories);
     }
 }

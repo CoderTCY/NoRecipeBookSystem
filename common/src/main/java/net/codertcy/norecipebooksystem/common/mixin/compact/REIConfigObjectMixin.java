@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * @see REIConfigScreenMixin Removes the option from the config screen UI
  * @see REISubMenuMixin    Removes the toggle from the gear icon quick menu
  */
-@Mixin(targets = "me.shedaniel.rei.impl.client.config.ConfigObjectImpl", priority = 2000)
+@Mixin(targets = "me.shedaniel.rei.impl.client.config.ConfigObjectImpl", priority = 2000, remap = false)
 public abstract class REIConfigObjectMixin {
     /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private REIConfigObjectMixin() {}
