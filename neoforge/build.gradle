@@ -3,6 +3,11 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+dependencies {
+    compileOnly('me.shedaniel:RoughlyEnoughItems-neoforge:16.0.799') { transitive = false }
+    compileOnly('dev.emi:emi-neoforge:1.1.24+1.21.1') { transitive = false }
+}
+
 neoForge {
     version = neoforge_version
     // Automatically enable neoforge AccessTransformers if the file exists

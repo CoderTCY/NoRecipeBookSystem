@@ -5,14 +5,12 @@
   "minVersion": "0.8",
   "refmap": "${mod_id}.refmap.json",
   "client": [
-    "ButtonMixin",
     "ClientRecipeBookMixin",
     "ImageButtonAccessor",
     "ScreenMixin"
   ],
   "mixins": [
     "RecipeBookMixin",
-    "ServerPlayerMixin",
     "ServerRecipeBookMixin"
   ],
   "injectors": {

@@ -6,8 +6,7 @@ license = "${license}"
 config = "${mod_id}.mixins.json"
 
 [[mixins]]
-config = "${mod_id}.compat.mixins.json"
-required = false
+config = "${mod_id}.neoforge.compat.mixins.json"
 
 [[mods]]
 modId = "${mod_id}"

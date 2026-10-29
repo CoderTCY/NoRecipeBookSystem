@@ -7,7 +7,7 @@ base {
 }
 jar {
     manifest {
-        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json,${mod_id}.compat.mixins.json"
+        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json,${mod_id}.forge.compat.mixins.json"
     }
 }
 
@@ -68,6 +68,9 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    // These official-mapped classes are compile-only; no NeoForge API is linked by compat code.
+    compileOnly('me.shedaniel:RoughlyEnoughItems-neoforge:16.0.799') { transitive = false }
+    compileOnly('dev.emi:emi-neoforge:1.1.24+1.21.1') { transitive = false }
 
     // Forge's hack fix
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }

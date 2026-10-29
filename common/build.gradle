@@ -18,9 +18,13 @@ neoForge {
 
 dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    compileOnly 'org.ow2.asm:asm-tree:9.7'
     // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
+    // Official-mapped implementation APIs, never included in the published jar.
+    compileOnly('me.shedaniel:RoughlyEnoughItems-neoforge:16.0.799') { transitive = false }
+    compileOnly('dev.emi:emi-neoforge:1.1.24+1.21.1') { transitive = false }
 }
 
 configurations {

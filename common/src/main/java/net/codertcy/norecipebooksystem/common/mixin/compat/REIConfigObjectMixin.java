@@ -3,7 +3,6 @@ package net.codertcy.norecipebooksystem.common.mixin.compat;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,15 +20,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * </ul>
  * By pinning the return value to {@code false}, we prevent REI from touching
  * the recipe book button at all, leaving full control to this mod's own
- * {@code ButtonMixin} / {@code ScreenMixin}.
+ * {@code ScreenMixin}.
  *
  * <p>REI is optional — this mixin only activates when REI is present.
  *
  * @see REIConfigScreenMixin Removes the option from the main config screen UI
  * @see REISubMenuMixin    Removes the toggle from the gear icon quick menu
  */
-@Pseudo
-@Mixin(targets = "me.shedaniel.rei.impl.client.config.ConfigObjectImpl", priority = 2000)
+@Mixin(targets = "me.shedaniel.rei.impl.client.config.ConfigObjectImpl", priority = 2000, remap = false)
 public abstract class REIConfigObjectMixin {
     /** 禁止实例化；此类仅供 Mixin 注入使用。 */
     private REIConfigObjectMixin() {}

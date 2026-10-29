@@ -10,6 +10,8 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
     }
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modCompileOnly('me.shedaniel:RoughlyEnoughItems-fabric:16.0.799') { transitive = false }
+    modCompileOnly('dev.emi:emi-fabric:1.1.24+1.21.1') { transitive = false }
 }
 
 loom {
@@ -41,6 +43,7 @@ tasks.register('relocatedJar', com.github.jengelman.gradle.plugins.shadow.tasks.
     description = 'Relocate common classes to fabric.common sub-package for universal jar'
 
     from(zipTree(tasks.remapJar.archiveFile))
+    configurations = []
 
     relocate 'net.codertcy.norecipebooksystem.common', 'net.codertcy.norecipebooksystem.fabric.common'
 
@@ -76,7 +79,7 @@ tasks.register('fixFabricMixinConfigs') {
             java.nio.file.Files.write(fabricMixinConfigPath, fabricContent.getBytes('UTF-8'))
 
             // 2) Fix mixin config package (compat mixins)
-            def compatMixinConfigPath = fs.getPath('/norecipebooksystem.compat.mixins.json')
+            def compatMixinConfigPath = fs.getPath('/norecipebooksystem.fabric.compat.mixins.json')
             if (java.nio.file.Files.exists(compatMixinConfigPath)) {
                 def compatContent = new String(java.nio.file.Files.readAllBytes(compatMixinConfigPath), 'UTF-8')
                 compatContent = compatContent.replace(srcPkg, dstPkg)

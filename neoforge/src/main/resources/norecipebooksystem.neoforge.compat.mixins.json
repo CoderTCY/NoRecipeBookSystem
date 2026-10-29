@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.codertcy.norecipebooksystem.common.mixin.compat",
+  "plugin": "net.codertcy.norecipebooksystem.neoforge.compat.NeoForgeCompatMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "REIConfigObjectMixin",
+    "REIConfigScreenMixin",
+    "REISubMenuMixin",
+    "REISubMenuEntryAccessor",
+    "EMIConfigMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
