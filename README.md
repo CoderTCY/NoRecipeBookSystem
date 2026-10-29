@@ -7,7 +7,7 @@ This mod uses a different way to build source. Which means you need to just down
 2. `./gradlew universalJar`
 
 ## Branches
-`latest` follows the newest supported Minecraft version, currently 26.3. `26.1` is the separate 26.1 maintenance branch; `1.21` retains its own older-loader integrations.
+`latest` follows the newest supported Minecraft version, currently 26.3. `26.1` is the separate 26.1 maintenance branch; `1.21.1` retains its own older-loader integrations.
 
 ## Optional recipe viewers
 This branch targets Minecraft 26.3 on Fabric and NeoForge. Viewer implementation APIs are `compileOnly`: they are not bundled or required to run this mod.
